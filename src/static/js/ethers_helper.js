@@ -537,6 +537,24 @@ const rewardsContract_unstake = async function(rewardPoolAddr, App) {
   }
 }
 
+const rewardsContract_movetobardroom = async function(rewardPoolAddr, App) {
+  const signer = App.provider.getSigner()
+
+  const REWARD_POOL = new ethers.Contract(rewardPoolAddr, Y_STAKING_POOL_ABI, signer)
+  const currentStakedAmount = await REWARD_POOL.balanceOf(App.YOUR_ADDRESS)
+
+  if (currentStakedAmount > 0) {
+    showLoading()
+    REWARD_POOL.stakeInBoardroom({gasLimit: 500000})
+      .then(function(t) {
+        return App.provider.waitForTransaction(t.hash)
+      })
+      .catch(function() {
+        hideLoading()
+      })
+  }
+}
+
 const rewardsContract_exit = async function(rewardPoolAddr, App) {
   const signer = App.provider.getSigner()
 
@@ -1216,7 +1234,8 @@ function getUniPrices(tokens, prices, pool)
   else if (pool.symbol.includes("SLP")) stakeTokenTicker += " SLP";
   else if (pool.symbol.includes("Cake")) stakeTokenTicker += " Cake LP";
   else if (pool.name.includes("Value LP")) stakeTokenTicker += " Value LP";
-  else if (pool.symbol.includes("PGL")) stakeTokenTicker += " PGL"
+  else if (pool.symbol.includes("PGL")) stakeTokenTicker += " PGL";
+  else if (pool.symbol.includes("CS-LP")) stakeTokenTicker += " CSS LP";
   else stakeTokenTicker += " Uni LP";
   return {
       t0: t0,
@@ -1235,6 +1254,7 @@ function getUniPrices(tokens, prices, pool)
           pool.symbol.includes("SLP") ?  `http://analytics.sushi.com/pairs/${pool.address}` :
             pool.symbol.includes("Cake") ?  `https://pancakeswap.info/pair/${pool.address}` :
             pool.symbol.includes("PGL") ?  `https://info.pangolin.exchange/#/pair/${pool.address}` :
+            pool.symbol.includes("CS-LP") ?  `https://app.coinswap.space/#/` :
             pool.name.includes("Value LP") ?  `https://info.vswap.fi/pool/${pool.address}` :
             chain == "matic" ? `https://info.quickswap.exchange/pair/${pool.address}` :
           `http://uniswap.info/pair/${pool.address}`;
@@ -1251,6 +1271,11 @@ function getUniPrices(tokens, prices, pool)
           `https://exchange.pancakeswap.finance/#/remove/${t0address}/${t1address}`,
           `https://exchange.pancakeswap.finance/#/swap?inputCurrency=${t0address}&outputCurrency=${t1address}`
         ] :
+        chain=='matic'? [
+          `https://quickswap.exchange/#/add/${t0address}/${t1address}`,
+          `https://quickswap.exchange/#/remove/${t0address}/${t1address}`,
+          `https://quickswap.exchange/#/swap?inputCurrency=${t0address}&outputCurrency=${t1address}`
+        ] :
         pool.name.includes("Value LP") ? [
           `https://bsc.valuedefi.io/#/add/${t0address}/${t1address}`,
           `https://bsc.valuedefi.io/#/remove/${t0address}/${t1address}`,
@@ -1260,6 +1285,11 @@ function getUniPrices(tokens, prices, pool)
           `https://app.pangolin.exchange/#/add/${t0address}/${t1address}`,
           `https://app.pangolin.exchange/#/remove/${t0address}/${t1address}`,
           `https://app.pangolin.exchange/#/swap?inputCurrency=${t0address}&outputCurrency=${t1address}`
+        ] :
+        pool.symbol.includes("CS-LP") ? [
+          `https://app.coinswap.space/#/add/${t0address}/${t1address}`,
+          `https://app.coinswap.space/#/remove/${t0address}/${t1address}`,
+          `https://app.coinswap.space/#/swap?inputCurrency=${t0address}&outputCurrency=${t1address}`
         ] :
         pool.symbol.includes("SLP") ? [
           `https://app.sushi.com/add/${t0address}/${t1address}`,
@@ -1272,12 +1302,8 @@ function getUniPrices(tokens, prices, pool)
         const helperHrefs = helperUrls.length == 0 ? "" :
           ` <a href='${helperUrls[0]}' target='_blank'>[+]</a> <a href='${helperUrls[1]}' target='_blank'>[-]</a> <a href='${helperUrls[2]}' target='_blank'>[<=>]</a>`
         _print(`<a href='${poolUrl}' target='_blank'>${stakeTokenTicker}</a>${helperHrefs} Price: $${formatMoney(price)} TVL: $${formatMoney(tvl)}`);
-        if(p0 < 0.01){
-          _print(`${t0.symbol} Price: $${p0.toFixed(8)}`)
-        }else{
-          _print(`${t0.symbol} Price: $${formatMoney(p0)}`)
-        }
-        _print(`${t1.symbol} Price: $${formatMoney(p1)}`)
+        _print(`${t0.symbol} Price: $${displayPrice(p0)}`);
+        _print(`${t1.symbol} Price: $${displayPrice(p1)}`);
         _print(`Staked: ${pool.staked.toFixed(decimals ?? 4)} ${pool.symbol} ($${formatMoney(staked_tvl)})`);
       },
       print_contained_price(userStaked) {
@@ -1944,7 +1970,7 @@ async function printSynthetixPool(App, info, chain="eth") {
         _print(`<a target="_blank" href="https://hecoinfo.com/address/${info.stakingAddress}#code">Heco Scan</a>`);
         break;
       case "matic":
-        _print(`<a target="_blank" href="https://explorer-mainnet.maticvigil.com/address/${info.stakingAddress}#code">Matic Explorer</a>`);
+        _print(`<a target="_blank" href="https://explorer-mainnet.maticvigil.com/address/${info.stakingAddress}#code">Polygon Explorer</a>`);
         break;
       case "fantom":
         _print(`<a target="_blank" href="https://ftmscan.com/address/${info.stakingAddress}#code">FTM Scan</a>`);
@@ -2068,4 +2094,9 @@ async function getAverageBlockTime(App){
   const previousBlock = await App.provider.getBlock(currentBlockNumber - 15000);
   const differenceTimestamp = currentBlock.timestamp - previousBlock.timestamp;
   return differenceTimestamp / 15000;
+}
+
+const displayPrice = price => {
+  const priceDecimals = price == 0 ? 2 : price < 0.0001 ? 10 : price < 0.01 ? 6 : 2;
+  return priceDecimals == 2 ? formatMoney(price) : price.toFixed(priceDecimals);
 }
