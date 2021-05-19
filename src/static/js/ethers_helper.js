@@ -111,10 +111,6 @@ async function init_ethers() {
       }
     }
 
-  } catch (e) {
-
-  }
-
   if (!App.YOUR_ADDRESS || !ethers.utils.isAddress(App.YOUR_ADDRESS)) {
     throw 'Could not initialize your address. Make sure your address is checksum valid.'
   }
