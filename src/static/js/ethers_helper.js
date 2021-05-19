@@ -276,9 +276,10 @@ const _print = function(message) {
     for (let i = 0; i < arguments.length; i++) {
         if (typeof arguments[i] == 'object') {
             logger.innerHTML +=
-                (JSON && JSON.stringify ? JSON.stringify(arguments[i], undefined, 2) : arguments[i]) + '<br />'
+                (JSON && JSON.stringify ? JSON.stringify(arguments[i], undefined, 2) : '<p>' + arguments[i]) + '</p>'
         } else {
-            logger.innerHTML += arguments[i] + '<br />'
+            // OVERRIDE
+            logger.innerHTML += '<p>' + arguments[i] + '</p>'
         }
     }
 }
