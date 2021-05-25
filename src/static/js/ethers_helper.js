@@ -34,6 +34,12 @@ const pageNetwork = function() {
     if (network.toLowerCase() === 'avax') {
         return window.NETWORKS.AVALANCHE
     }
+  if (network.toLowerCase() === 'fuse') {
+    return window.NETWORKS.FUSE
+  }
+  if (network.toLowerCase() === 'thundercore') {
+    return window.NETWORKS.THUNDERCORE
+  }
 
     return window.NETWORKS.ETHEREUM
 }
@@ -1422,6 +1428,7 @@ function getUniPrices(tokens, prices, pool)
     else if (pool.symbol.includes("Lv1")) stakeTokenTicker += " STEAK LP";
     else if (pool.symbol.includes("PLP")) stakeTokenTicker += " Pure Swap LP";
     else if (pool.symbol.includes("Field-LP")) stakeTokenTicker += " Yield Fields LP";
+  else if (pool.symbol.includes("UPT")) stakeTokenTicker += " Unic Swap LP";
   else stakeTokenTicker += " Uni LP";
     return {
         t0: t0,
@@ -1465,7 +1472,7 @@ function getUniPrices(tokens, prices, pool)
                                                     pool.symbol.includes("Lv1") ?  `https://info.steakhouse.finance/pair/${pool.address}` :
                                                         pool.symbol.includes("PLP") ?  `https://exchange.pureswap.finance/#/swap` :
                                                             pool.symbol.includes("BLP") ?  `https://info.bakeryswap.org/#/pair/${pool.address}` :
-                                                                pool.symbol.includes("Field-LP") ?  `https://exchange.yieldfields.finance/#/swap` :chain == "matic" ? `https://info.quickswap.exchange/pair/${pool.address}` :
+                                                                pool.symbol.includes("Field-LP") ?  `https://exchange.yieldfields.finance/#/swap` :pool.symbol.includes("UPT") ?  `https://www.app.unic.ly/#/discover` :chain == "matic" ? `https://info.quickswap.exchange/pair/${pool.address}` :
                                                                     `http://uniswap.info/pair/${pool.address}`;
                 const helperUrls = pool.is1inch ? [] :
                     pool.symbol.includes("LSLP") ? [
@@ -1527,6 +1534,11 @@ function getUniPrices(tokens, prices, pool)
             `https://exchange.yieldfields.finance/#/remove/${t0address}/${t1address}`,
             `https://exchange.yieldfields.finance/#/swap?inputCurrency=${t0address}&outputCurrency=${t1address}`
                                                                 ] :
+          pool.symbol.includes("UPT") ? [
+            `https://www.app.unic.ly/#/add/${t0address}/${t1address}`,
+            `https://www.app.unic.ly/#/remove/${t0address}/${t1address}`,
+            `https://www.app.unic.ly/#/swap?inputCurrency=${t0address}&outputCurrency=${t1address}`
+          ] :
                                                                 chain=='matic'? [
                                                                         `https://quickswap.exchange/#/add/${t0address}/${t1address}`,
                                                                         `https://quickswap.exchange/#/remove/${t0address}/${t1address}`,
@@ -1866,7 +1878,9 @@ function getErc20Prices(prices, pool, chain="eth") {
         case "fantom":
             poolUrl=`https://ftmscan.com/token/${pool.address}`;
             break;
-    }
+    case "fuse":
+      poolUrl=`https://explorer.fuse.io/address/${pool.address}`;
+      break;}
     const name = `<a href='${poolUrl}' target='_blank'>${pool.symbol}</a>`;
     return {
         staked_tvl : staked_tvl,
@@ -2025,7 +2039,7 @@ function printChefPool(App, chefAbi, chefAddr, prices, tokens, poolInfo, poolInd
                        totalAllocPoints, rewardsPerWeek, rewardTokenTicker, rewardTokenAddress,
                        pendingRewardsFunction, fixedDecimals, claimFunction, chain="eth", depositFee=0, withdrawFee=0) {
     fixedDecimals = fixedDecimals ?? 2;
-    const sp = (poolInfo.stakedToken == null) ? null : getPoolPrices(tokens, prices, poolInfo.stakedToken);
+    const sp = (poolInfo.stakedToken == null) ? null : getPoolPrices(tokens, prices, poolInfo.stakedToken, chain);
     var poolRewardsPerWeek = poolInfo.allocPoints / totalAllocPoints * rewardsPerWeek;
     if (poolRewardsPerWeek == 0 && rewardsPerWeek != 0) return;
     const userStaked = poolInfo.userLPStaked ?? poolInfo.userStaked;
@@ -2350,6 +2364,9 @@ async function printSynthetixPool(App, info, chain="eth", customURLs) {
         case "fantom":
             _print(`<a target="_blank" href="https://ftmscan.com/address/${info.stakingAddress}#code">FTM Scan</a>`);
             break;
+      case "fuse":
+        _print(`<a target="_blank" href="https://explorer.fuse.io/address/${info.stakingAddress}#code">FUSE Scan</a>`);
+        break;
     }
     if (info.stakeTokenTicker != "ETH") {
         _print_link(`Stake ${info.userUnstaked.toFixed(6)} ${info.stakeTokenTicker}`, approveTENDAndStake)

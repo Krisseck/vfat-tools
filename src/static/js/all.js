@@ -22,7 +22,7 @@ const main = async() => {
       ["Gamestop                     ",`<a href="../gme"                >Various</a>`,"GME                ","https://gamestop.finance"],
       ["Harvest Finance              ",`<a href="../harvest-finance/"   >Various</a>`,"FARM               ","https://harvest.finance"],
       ["Ichi                         ",`<a href="../ichi/"              >Various</a>`,"Ichi               ","https://ichi.farm"],
-      ["Indexed *                    ",`<a href="../indexed"            >Various</a>`,"NDX                ","https://indexed.finance"],
+      ["Indexed                      ",`<a href="../indexed"            >Various</a>`,"NDX                ","https://indexed.finance"],
       ["MITH Cash                    ",`<a href="../mithcash/"          >Various</a>`,"MIS,MIC            ","https://mith.cash"],
       ["Morph                        ",`<a href="../morph"              >Various</a>`,"MORT               ","https://morph.finance"],
       ["Mushrooms                    ",`<a href="../mushrooms"          >Various</a>`,"MM                 ","https://mushrooms.finance"],
@@ -121,7 +121,9 @@ const main = async() => {
       ["Swipe                        ",`<a href="../swipe"              >Various</a>`,"SXP                ","https://swipe.org"],
       ["Convex                       ",`<a href="../convex"             >Various</a>`,"CVX                ","https://www.convexfinance.com"],
       ["Unicly                       ",`<a href="../unicly"             >Various</a>`,"UNIC               ","https://www.app.unic.ly/#/farm"],
-      ["Lever                        ",`<a href="../lever"              >Various</a>`,"LEV                ","https://lever.network"]
+      ["Lever                        ",`<a href="../lever"              >Various</a>`,"LEV                ","https://lever.network"],
+      ["Fuse                         ",`<a href="../fuse_eth"           >Various</a>`,"FUSE               ","https://fuse.io"],
+      ["Donkey                       ",`<a href="../donkey"             >Various</a>`,"DON                ","https://don-key.finance"]
     ]
   }
 
