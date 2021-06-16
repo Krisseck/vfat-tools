@@ -1985,20 +1985,21 @@ function getCurvePrices(prices, pool) {
     const poolUrl = `https://etherscan.io/token/${pool.address}`;
     const name = `<a href='${poolUrl}' target='_blank'>${pool.symbol}</a>`;
     const getDexguruTokenlink =  function() {
-    const network = window.location.pathname.split("/")[1]
-    let dexguruTokenlink = '';
-    if (tvl > 0) {
-      if (network && (network.toLowerCase() === 'bsc' || network.toLowerCase() === 'eth' || network.toLowerCase() === 'polygon')) {
-        dexguruTokenlink =   `<a href='https://dex.guru/token/${pool.address.toLowerCase()}-${network.toLowerCase()}' rel='noopener' target='_blank'>[%]</a>`;
-      }
+        const network = window.location.pathname.split("/")[1]
+        let dexguruTokenlink = '';
+        if (tvl > 0) {
+            if (network && (network.toLowerCase() === 'bsc' || network.toLowerCase() === 'eth' || network.toLowerCase() === 'polygon')) {
+                dexguruTokenlink =   `<a href='https://dex.guru/token/${pool.address.toLowerCase()}-${network.toLowerCase()}' rel='noopener' target='_blank'>[%]</a>`;
+            }
+        }
+        return dexguruTokenlink
     }
-    return dexguruTokenlink
-  }return {
+    return {
         staked_tvl : staked_tvl,
         price : price,
         stakeTokenTicker : pool.symbol,
         print_price() {
-            _print(`${name} Price: $${formatMoney(price)} Market Cap: $${formatMoney(tvl)}${getDexguruTokenlink()}`);
+            _print(`${name} Price: $${formatMoney(price)} Market Cap: $${formatMoney(tvl)} ${getDexguruTokenlink()}`);
             _print(`Staked: ${pool.staked.toFixed(4)} ${pool.symbol} ($${formatMoney(staked_tvl)})`);
         },
         print_contained_price() {
