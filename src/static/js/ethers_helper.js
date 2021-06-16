@@ -1392,7 +1392,7 @@ function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {
     }
 }
 
-function getUniPrices(tokens, prices, pool)
+function getUniPrices(tokens, prices, pool, chain="eth")
 {
     var t0 = getParameterCaseInsensitive(tokens,pool.token0);
     var p0 = getParameterCaseInsensitive(prices,pool.token0)?.usd;
@@ -1443,6 +1443,8 @@ function getUniPrices(tokens, prices, pool)
     else if (pool.symbol.includes("Field-LP")) stakeTokenTicker += " Yield Fields LP";
   else if (pool.symbol.includes("UPT")) stakeTokenTicker += " Unic Swap LP";
   else if (pool.symbol.includes("ELP")) stakeTokenTicker += " ELK LP";
+  else if (pool.symbol.includes("BenSwap")) stakeTokenTicker += " BenSwap LP";
+  else if (pool.symbol.includes("BRUSH-LP")) stakeTokenTicker += " BRUSH LP";
   else stakeTokenTicker += " Uni LP";
     return {
         t0: t0,
@@ -1476,7 +1478,14 @@ function getUniPrices(tokens, prices, pool)
             else {
                 const poolUrl = pool.is1inch ? "https://1inch.exchange/#/dao/pools" :
                     pool.symbol.includes("LSLP") ? `https://info.linkswap.app/pair/${pool.address}` :
-                        pool.symbol.includes("SLP") ?  `http://analytics.sushi.com/pairs/${pool.address}` :
+                        pool.symbol.includes("SLP") ? (
+              {
+                "eth": `http://analytics.sushi.com/pairs/${pool.address}`,
+                "bsc": `http://analytics-ftm.sushi.com/pairs/${pool.address}`,
+                "fantom": `http://analytics-ftm.sushi.com/pairs/${pool.address}`,
+                "matic": `http://analytics-polygon.sushi.com/pairs/${pool.address}`,
+                "xdai": `https://analytics-xdai.sushi.com/pairs/${pool.address}`
+              }[chain]) :
                             pool.symbol.includes("Cake") ?  `https://pancakeswap.info/pair/${pool.address}` :
                                 pool.symbol.includes("PGL") ?  `https://info.pangolin.exchange/#/pair/${pool.address}` :
                                     pool.symbol.includes("CS-LP") ?  `https://app.coinswap.space/#/` :
@@ -1484,9 +1493,11 @@ function getUniPrices(tokens, prices, pool)
                                             pool.symbol.includes("SPIRIT") ?  `https://swap.spiritswap.finance/#/swap` :
                                                 pool.symbol.includes("spLP") ?  `https://info.spookyswap.finance/pair/${pool.address}` :
                                                     pool.symbol.includes("Lv1") ?  `https://info.steakhouse.finance/pair/${pool.address}` :
-                                                        pool.symbol.includes("ELP") ?  `https://app.elk.finance/#/swap` :pool.symbol.includes("PLP") ?  `https://exchange.pureswap.finance/#/swap` :
+                                                        pool.symbol.includes("ELP") ?  `https://app.elk.finance/#/swap` :pool.symbol.includes("BRUSH-LP") ?  `https://paintswap.finance` :pool.symbol.includes("PLP") ?  `https://exchange.pureswap.finance/#/swap` :
                                                             pool.symbol.includes("BLP") ?  `https://info.bakeryswap.org/#/pair/${pool.address}` :
-                                                                pool.symbol.includes("Field-LP") ?  `https://exchange.yieldfields.finance/#/swap` :pool.symbol.includes("UPT") ?  `https://www.app.unic.ly/#/discover` :chain == "matic" ? `https://info.quickswap.exchange/pair/${pool.address}` :
+                                                                pool.symbol.includes("Field-LP") ?  `https://exchange.yieldfields.finance/#/swap` :pool.symbol.includes("UPT") ?  `https://www.app.unic.ly/#/discover` :pool.symbol.includes("BenSwap") ? ({
+                "bsc": `https://info.benswap.finance/pair/${pool.address}`
+              }[chain]) :chain == "matic" ? `https://info.quickswap.exchange/pair/${pool.address}` :
                                                                     `http://uniswap.info/pair/${pool.address}`;
                 const helperUrls = pool.is1inch ? [] :
                     pool.symbol.includes("LSLP") ? [
@@ -1557,7 +1568,18 @@ function getUniPrices(tokens, prices, pool)
             `https://www.app.unic.ly/#/remove/${t0address}/${t1address}`,
             `https://www.app.unic.ly/#/swap?inputCurrency=${t0address}&outputCurrency=${t1address}`
           ] :
-                                                                chain=='matic'? [
+                                                                pool.symbol.includes("BRUSH-LP") ? [
+            `https://exchange.paintswap.finance/#/add/${t0address}/${t1address}`,
+            `https://exchange.paintswap.finance/#/remove/${t0address}/${t1address}`,
+            `https://exchange.paintswap.finance/#/swap?inputCurrency=${t0address}&outputCurrency=${t1address}`
+          ] :
+          pool.symbol.includes("BenSwap") ? ({
+            "bsc": [
+              `https://dex.benswap.finance/#/add/${t0address}/${t1address}`,
+              `https://dex.benswap.finance/#/remove/${t0address}/${t1address}`,
+              `https://dex.benswap.finance/#/swap?inputCurrency=${t0address}&outputCurrency=${t1address}`
+            ]
+          }[chain]) :chain=='matic'? [
                                                                         `https://quickswap.exchange/#/add/${t0address}/${t1address}`,
                                                                         `https://quickswap.exchange/#/remove/${t0address}/${t1address}`,
                                                                         `https://quickswap.exchange/#/swap?inputCurrency=${t0address}&outputCurrency=${t1address}`
@@ -1612,7 +1634,9 @@ function getUniPrices(tokens, prices, pool)
                                     pool.symbol.includes("CS-LP") ?  `https://app.coinswap.space/#/` :
                                         pool.name.includes("Value LP") ?  `https://info.vswap.fi/pool/${pool.address}` :
                                             pool.name.includes("BLP") ?  `https://info.bakeryswap.org/#/pair/${pool.address}` :
-                                                chain == "matic" ? `https://info.quickswap.exchange/pair/${pool.address}` :
+                                                pool.symbol.includes("BenSwap") ? ({
+                            "bsc": `https://info.benswap.finance/pair/${pool.address}`
+                          }[chain]) :chain == "matic" ? `https://info.quickswap.exchange/pair/${pool.address}` :
                                                     `http://uniswap.info/pair/${pool.address}`;
                 const helperUrls = pool.is1inch ? [] :
                     pool.symbol.includes("LSLP") ? [
@@ -1649,7 +1673,13 @@ function getUniPrices(tokens, prices, pool)
                                                     `https://app.sushi.com/add/${t0address}/${t1address}`,
                                                     `https://app.sushi.com/remove/${t0address}/${t1address}`,
                                                     `https://app.sushi.com/swap?inputCurrency=${t0address}&outputCurrency=${t1address}`
-                                                ] :
+                                                ] :pool.symbol.includes("BenSwap") ? ({
+                            "bsc": [
+                              `https://dex.benswap.finance/#/add/${t0address}/${t1address}`,
+                              `https://dex.benswap.finance/#/remove/${t0address}/${t1address}`,
+                              `https://dex.benswap.finance/#/swap?inputCurrency=${t0address}&outputCurrency=${t1address}`
+                            ]
+                          }[chain]) :
                                                 t0.symbol.includes("COMFI") ? [
                                                         `https://app.uniswap.org/#/add/v2/${t0address}/${t1address}`,
                                                         `https://app.uniswap.org/#/remove/v2/${t0address}/${t1address}`,
@@ -1898,32 +1928,51 @@ function getErc20Prices(prices, pool, chain="eth") {
             break;
     case "fuse":
       poolUrl=`https://explorer.fuse.io/address/${pool.address}`;
-      break;}
-    const name = `<a href='${poolUrl}' target='_blank'>${pool.symbol}</a>`;
-    return {
-        staked_tvl : staked_tvl,
-        price : price,
-        stakeTokenTicker : pool.symbol,
-        print_price() {
-            _print(`${name} Price: $${displayPrice(price)} Market Cap: $${formatMoney(tvl)}`);
-            _print(`Staked: ${pool.staked.toFixed(4)} ${pool.symbol} ($${formatMoney(staked_tvl)})`);
-        },
-        pair_links() {
-            return {
-                pair_link: name,
-                add_liquidity_link: "",
-                remove_liquidity_link: "",
-                swap_link: "",
-                price0: "",
-                price1: "",
-                total_staked: `${pool.staked.toFixed(4)}`,
-                total_staked_dollars: `$${formatMoney(staked_tvl)}`,
-                tvl: `$${formatMoney(tvl)}`
-            }
-        },
-        print_contained_price() {
-        }
+      break;
+    case "xdai":
+      poolUrl=`https://blockscout.com/xdai/mainnet/tokens/${pool.address}`;
+      break;
+  }
+
+  const getDexguruTokenlink =  function() {
+    const network = window.location.pathname.split("/")[1]
+    let dexguruTokenlink = '';
+    if (tvl > 0) {
+      if (network && (network.toLowerCase() === 'bsc' || network.toLowerCase() === 'eth' || network.toLowerCase() === 'polygon')) {
+        dexguruTokenlink =   `<a href='https://dex.guru/token/${pool.address.toLowerCase()}-${network.toLowerCase()}' rel='noopener' target='_blank'>[%]</a>`;
+      }
+      if (chain && (chain.toLowerCase() === 'bsc' || chain.toLowerCase() === 'eth' || chain.toLowerCase() === 'polygon')) {
+        dexguruTokenlink =   `<a href='https://dex.guru/token/${pool.address.toLowerCase()}-${chain.toLowerCase()}' rel='noopener' target='_blank'>[%]</a>`;
+      }
     }
+    return dexguruTokenlink
+  }
+
+  const name = `<a href='${poolUrl}' target='_blank'>${pool.symbol}</a>`;
+  return {
+    staked_tvl : staked_tvl,
+    price : price,
+    stakeTokenTicker : pool.symbol,
+    print_price() {
+      _print(`${name} Price: $${displayPrice(price)} Market Cap: $${formatMoney(tvl)} ${getDexguruTokenlink()}`);
+      _print(`Staked: ${pool.staked.toFixed(4)} ${pool.symbol} ($${formatMoney(staked_tvl)})`);
+    },
+    pair_links() {
+      return {
+        pair_link: name,
+        add_liquidity_link: "",
+        remove_liquidity_link: "",
+        swap_link: "",
+        price0: "",
+        price1: "",
+        total_staked: `${pool.staked.toFixed(4)}`,
+        total_staked_dollars: `$${formatMoney(staked_tvl)}`,
+        tvl: `$${formatMoney(tvl)}`
+      }
+    },
+    print_contained_price() {
+    }
+  }
 }
 
 function getCurvePrices(prices, pool) {
@@ -1935,12 +1984,21 @@ function getCurvePrices(prices, pool) {
     var staked_tvl = pool.staked * price;
     const poolUrl = `https://etherscan.io/token/${pool.address}`;
     const name = `<a href='${poolUrl}' target='_blank'>${pool.symbol}</a>`;
-    return {
+    const getDexguruTokenlink =  function() {
+    const network = window.location.pathname.split("/")[1]
+    let dexguruTokenlink = '';
+    if (tvl > 0) {
+      if (network && (network.toLowerCase() === 'bsc' || network.toLowerCase() === 'eth' || network.toLowerCase() === 'polygon')) {
+        dexguruTokenlink =   `<a href='https://dex.guru/token/${pool.address.toLowerCase()}-${network.toLowerCase()}' rel='noopener' target='_blank'>[%]</a>`;
+      }
+    }
+    return dexguruTokenlink
+  }return {
         staked_tvl : staked_tvl,
         price : price,
         stakeTokenTicker : pool.symbol,
         print_price() {
-            _print(`${name} Price: $${formatMoney(price)} Market Cap: $${formatMoney(tvl)}`);
+            _print(`${name} Price: $${formatMoney(price)} Market Cap: $${formatMoney(tvl)}${getDexguruTokenlink()}`);
             _print(`Staked: ${pool.staked.toFixed(4)} ${pool.symbol} ($${formatMoney(staked_tvl)})`);
         },
         print_contained_price() {
