@@ -17,6 +17,7 @@ const main = async() => {
       ["BIOPset                      ",`<a href="../biopset"           >BIOP-ETH</a>`,"BIOP               ","https://biopset.com"],
       ["Daiq                         ",`<a href="../daiq"               >Various</a>`,"DAIQ               ","https://daiq.io"],
       ["Debase                       ",`<a href="../debase"             >Various</a>`,"DEBASE             ","https://debaseonomics.io"],
+      ["Dopex                        ",`<a href="../dopex"              >Various</a>`,"DPX, rDPX          ","https://app.dopex.io/farms"],
       ["Dynamic Set Dollar           ",`<a href="../dsd/"               >Various</a>`,"DSD                ","https://dsd.finance/app"],
       ["Empty Set Dollar             ",`<a href="../esd/"               >Various</a>`,"ESD                ","https://app.emptyset.finance"],
       ["Frax Finance                 ",`<a href="../frax/"              >Various</a>`,"FXS                ","https://app.frax.finance"],
@@ -120,7 +121,7 @@ const main = async() => {
       ["Kineko                       ",`<a href="../kineko"             >Various</a>`,"KKO                ","http://stake.kineko.io"],
       ["Oiler                        ",`<a href="../oiler"              >Various</a>`,"OIL                ","http://staking.oiler.network"],
       ["Swipe                        ",`<a href="../swipe"              >Various</a>`,"SXP                ","https://swipe.org"],
-      ["Convex *                     ",`<a href="../convex"             >Various</a>`,"Various            ","https://www.convexfinance.com"],
+      ["Convex                       ",`<a href="../convex"             >Various</a>`,"Various            ","https://www.convexfinance.com"],
       ["Unicly                       ",`<a href="../unicly"             >Various</a>`,"UNIC               ","https://www.app.unic.ly/#/farm"],
       ["Lever                        ",`<a href="../lever"              >Various</a>`,"LEV                ","https://lever.network"],
       ["Fuse                         ",`<a href="../fuse_eth"           >Various</a>`,"FUSE               ","https://fuse.io"],
@@ -128,7 +129,10 @@ const main = async() => {
       ["Wild Credit                  ",`<a href="../wild"               >Various</a>`,"WILD               ","https://wild.credit"],
       ["Convergence                  ",`<a href="../convx"              >Various</a>`,"CONV               ","https://convx.conv.finance"],
       ["Abracadabra                  ",`<a href="../abracadabra"        >Various</a>`,"SPELL              ","https://abracadabra.money"],
-      ["Universe                     ",`<a href="../universe"           >Various</a>`,"XYZ                ","https://dao.universe.xyz/yield-farming"]
+      ["Universe                     ",`<a href="../universe"           >Various</a>`,"XYZ                ","https://dao.universe.xyz/yield-farming"],
+      ["Insta Dapp                   ",`<a href="../insta"              >Various</a>`,"INST               ","https://defi.instadapp.io"],
+      ["Pendle                       ",`<a href="../pendle"             >Various</a>`,"PENDLE             ","https://app.pendle.finance"],      
+      ["Kyber                        ",`<a href="../kyber"              >Various</a>`,"KNC                ","http://dmm.exchange/"],      
     ]
   }
 
