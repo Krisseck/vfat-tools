@@ -25,6 +25,9 @@ const pageNetwork = function() {
     if (network.toLowerCase() === 'okex') {
     return window.NETWORKS.OKEX
   }
+  if (network.toLowerCase() === 'kcc') {
+    return window.NETWORKS.KCC
+  }
   if (network.toLowerCase() === 'xdai') {
         return window.NETWORKS.XDAI
     }
@@ -1545,6 +1548,7 @@ function getUniPrices(tokens, prices, pool, chain="eth")
   else if (pool.symbol.includes("ELP")) stakeTokenTicker += " ELK LP";
   else if (pool.symbol.includes("BenSwap")) stakeTokenTicker += " BenSwap LP";
   else if (pool.symbol.includes("BRUSH-LP")) stakeTokenTicker += " BRUSH LP";
+  else if (pool.symbol.includes("APE-LP")) stakeTokenTicker += " APE LP";
   else stakeTokenTicker += " Uni LP";
     return {
         t0: t0,
@@ -1594,7 +1598,7 @@ function getUniPrices(tokens, prices, pool, chain="eth")
                                                 pool.symbol.includes("spLP") ?  `https://info.spookyswap.finance/pair/${pool.address}` :
                                                     pool.symbol.includes("Lv1") ?  `https://info.steakhouse.finance/pair/${pool.address}` :
                                                         pool.symbol.includes("ELP") ?  `https://app.elk.finance/#/swap` :pool.symbol.includes("BRUSH-LP") ?  `https://paintswap.finance` :pool.symbol.includes("PLP") ?  `https://exchange.pureswap.finance/#/swap` :
-                                                            pool.symbol.includes("BLP") ?  `https://info.bakeryswap.org/#/pair/${pool.address}` :pool.symbol.includes("ZDEXLP") ?  `https://charts.zoocoin.cash/?exchange=ZooDex&pair=${t0.symbol}-${t1.symbol}` :
+                                                            pool.symbol.includes("BLP") ?  `https://info.bakeryswap.org/#/pair/${pool.address}` :pool.symbol.includes("APE-LP") ?  `https://info.apeswap.finance/pair/${pool.address}` :pool.symbol.includes("ZDEXLP") ?  `https://charts.zoocoin.cash/?exchange=ZooDex&pair=${t0.symbol}-${t1.symbol}` :
                                                                 pool.symbol.includes("Field-LP") ?  `https://exchange.yieldfields.finance/#/swap` :pool.symbol.includes("UPT") ?  `https://www.app.unic.ly/#/discover` :pool.symbol.includes("BenSwap") ? ({
                 "bsc": `https://info.benswap.finance/pair/${pool.address}`
               }[chain]) :chain == "matic" ? `https://info.quickswap.exchange/pair/${pool.address}` :
@@ -1610,7 +1614,12 @@ function getUniPrices(tokens, prices, pool, chain="eth")
                                 `https://www.bakeryswap.org/#/remove/${t0address}/${t1address}`,
                                 `https://www.bakeryswap.org/#/swap?inputCurrency=${t0address}&outputCurrency=${t1address}`
                             ] :
-                            pool.symbol.includes("ZDEXLP") ? [
+                            pool.symbol.includes("APE-LP") ? [
+            `https://app.apeswap.finance/add/${t0address}/${t1address}`,
+            `https://app.apeswap.finance/remove/${t0address}/${t1address}`,
+            `https://app.apeswap.finance/swap?inputCurrency=${t0address}&outputCurrency=${t1address}`
+          ] :
+          pool.symbol.includes("ZDEXLP") ? [
             `https://dex.zoocoin.cash/pool/add?inputCurrency=${t0address}&outputCurrency=${t1address}`,
             `https://dex.zoocoin.cash/pool/remove?inputCurrency=${t0address}&outputCurrency=${t1address}`,
             `https://dex.zoocoin.cash/orders/market?inputCurrency=${t0address}&outputCurrency=${t1address}`
@@ -2030,6 +2039,9 @@ function getErc20Prices(prices, pool, chain="eth") {
             break;
         case "okex":
       poolUrl=`https://www.oklink.com/okexchain/address/${pool.address}`;
+      break;
+    case "kcc":
+      poolUrl=`https://explorer.kcc.io/en/address/${pool.address}`;
       break;
     case "avax":
             poolUrl=`https://cchain.explorer.avax.network/address/${pool.address}`;
@@ -2552,6 +2564,9 @@ async function printSynthetixPool(App, info, chain="eth", customURLs) {
             break;
         case "okex":
         _print(`<a target="_blank" href="https://www.oklink.com/okexchain/address/${info.stakingAddress}#code">Okex Explorer</a>`);
+        break;
+      case "kcc":
+        _print(`<a target="_blank" href="https://explorer.kcc.io/en/address/${info.stakingAddress}#code">KUCOIN Explorer</a>`);
         break;
       case "fantom":
             _print(`<a target="_blank" href="https://ftmscan.com/address/${info.stakingAddress}#code">FTM Scan</a>`);
